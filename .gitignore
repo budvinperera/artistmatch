@@ -9,9 +9,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Frontend build output
-frontend/dist/
-frontend/build/
 
 # Backend build output (if any)
 backend/dist/
