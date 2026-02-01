@@ -3,7 +3,7 @@ const path = require("path");
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 
-dotenv.config({path: "/.env"});
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express ();
 
@@ -17,6 +17,11 @@ database: process.env.DATABASE
 const publicDirectory = path.join(__dirname, "./public");
 app.use(express.static(publicDirectory));
 
+//parse URL-encoded bodies(as sent by HTML forms)
+app.use(express.urlencoded({ extended: false }));
+//parse JSON bodies (as sent by API clients)
+app.use(express.json());
+
 app.set("view engine", "hbs");
 
 db.connect((error) => {
@@ -27,15 +32,9 @@ db.connect((error) => {
     }
 })
 
-app.get("/", (req, res) => {
-//res.send("<h1>Home Page</h1>")
-res.render("index");
-}) ;
-
-app.get("/signup", (req, res) => {
-//res.send("<h1>Home Page</h1>")
-res.render("signup");
-}) ;
+//Define Routes
+app.use("/", require("./routes/pages"));
+app.use("/auth", require("./routes/auth"));
 
 app. listen(5001, () => {
 console. log("Server started on Port 5001");
