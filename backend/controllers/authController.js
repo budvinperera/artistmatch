@@ -1,18 +1,6 @@
 // controllers/auth.js
-const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
-const dotenv = require("dotenv");
-const path = require("path");
-
-dotenv.config({ path: path.join(__dirname, ".env") });
-
-// Create a single DB connection
-const db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE
-});
+const db = require("../config/db");
 
 //SIGNUP
 exports.signup = (req, res) => {
@@ -87,7 +75,7 @@ exports.login = (req, res) => {
             }
 
             // Successful login
-            return res.render("home", { name: user.name });
+            return res.redirect("/home");
         });
     });
 };

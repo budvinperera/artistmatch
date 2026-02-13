@@ -1,17 +1,6 @@
 // config/db.js
-const mysql = require("mysql");
-const dotenv = require("dotenv");
-const path = require("path");
-
-dotenv.config({ path: path.join(__dirname, "../.env") });
-
-const db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE
-});
-
+const bcrypt = require("bcryptjs");
+const db = require("../config/db");
 
 // GET /search?artistName=...
 exports.searchArtist = (req, res) => {
@@ -21,7 +10,12 @@ exports.searchArtist = (req, res) => {
         return res.render("home", { message: "Please enter an artist name." });
     }
 
-    const query = "SELECT * FROM artists WHERE name LIKE ?";
+    const query = `
+        SELECT a.name AS artist_name, g.name AS genre_name
+        FROM artists a
+        LEFT JOIN genres g ON a.genre_id = g.id
+        WHERE a.name LIKE ?
+    `;
     const searchValue = `%${artistName}%`;
 
     db.query(query, [searchValue], (err, results) => {
