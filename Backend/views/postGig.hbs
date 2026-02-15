@@ -1,0 +1,114 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #0f0f0f;
+        color: #fff;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      label {
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 14px;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+
+      .row input {
+        flex: 1;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 30px;
+        padding: 14px;
+        background-color: #3b82f6;
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #2563eb;
+      }
+
+      .logo {
+        text-align: center;
+        margin-top: 40px;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+
+      <h1>Post a Gig</h1>
+
+      <form method="POST" action="/api/gigs">
+
+        <label>Event Title</label>
+        <input
+          type="text"
+          name="eventTitle"
+          placeholder="Event Title"
+          required
+        />
+
+        <label>Venue</label>
+        <input type="text" name="venue" placeholder="Venue" required />
+
+        <label>Date & Time</label>
+        <div class="row">
+          <input type="date" name="date" required />
+          <input type="time" name="time" required />
+        </div>
+
+        <label>Genre</label>
+        <input type="text" name="genre" placeholder="Genre" required />
+
+        <label>Pay</label>
+        <input type="number" name="pay" placeholder="Pay" required />
+
+        <button type="submit">POST GIG</button>
+
+      </form>
+
+      <div class="logo">
+        <strong>ArtistMatch</strong>
+      </div>
+
+    </div>
+  </body>
+</html>
