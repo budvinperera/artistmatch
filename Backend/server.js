@@ -3,8 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const { engine } = require("express-handlebars");
+const http = require("http");
+const { Server } = require("socket.io");
+
 
 const gigsRoutes = require("./routes/gigs.routes");
+const messagesRoutes = require("./routes/messages.routes");
 
 const app = express();
 
@@ -25,6 +29,12 @@ app.get("/post-gig", (req, res) => {
 
 // API routes
 app.use("/api/gigs", gigsRoutes);
+app.use("/api/messages", messagesRoutes);
+
+// Chat UI route
+app.get("/chat", (req, res) => {
+  res.render("chat", { title: "Chat UI" });
+});
 
 // Root route
 app.get("/", (req, res) => {
@@ -33,4 +43,31 @@ app.get("/", (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
+
+  console.log("User connected:", socket.id);
+
+  socket.on("sendMessage", (messageData) => {
+
+    io.emit("receiveMessage", messageData);
+
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
