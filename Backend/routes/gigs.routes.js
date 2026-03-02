@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db"); // your database connection
+const db = require("../config/db"); // your database connection
 
 // POST a new gig
 router.post("/", (req, res) => {
