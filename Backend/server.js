@@ -6,16 +6,15 @@ const { engine } = require("express-handlebars");
 const http = require("http");
 const { Server } = require("socket.io");
 
-
 const gigsRoutes = require("./routes/gigs.routes");
-const messagesRoutes = require("./routes/messages.routes");
+const { router: messagesRoutes, saveMessage } = require("./routes/messages.routes");
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // parse form data
+app.use(express.urlencoded({ extended: true }));
 
 // Handlebars setup
 app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
@@ -38,10 +37,9 @@ app.get("/chat", (req, res) => {
 
 // Root route
 app.get("/", (req, res) => {
-  res.send("ArtistMatch API running");
+  res.send("hello");
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
@@ -52,22 +50,17 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-
   console.log("User connected:", socket.id);
 
   socket.on("sendMessage", (messageData) => {
-
     io.emit("receiveMessage", messageData);
-
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
-
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
-
