@@ -57,19 +57,19 @@ io.on("connection", (socket) => {
     console.log(`User ${userId} joined room user_${userId}`);
   });
 
-  socket.on("sendMessage", async (messageData) => {
-    try {
-      await saveMessage(messageData.senderId, messageData.receiverId, messageData.message);
-      io.to(`user_${messageData.receiverId}`).emit("receiveMessage", {
-        senderId: messageData.senderId,
-        receiverId: messageData.receiverId,
-        message: messageData.message,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (err) {
-      console.error("Failed to save/emit message:", err);
-    }
-  });
+ socket.on("sendMessage", async (messageData) => {
+  try {
+    await saveMessage(messageData.senderId, messageData.receiverId, messageData.message);
+    io.to(`user_${messageData.receiverId}`).emit("receiveMessage", {
+      senderId: messageData.senderId,
+      receiverId: messageData.receiverId,
+      message: messageData.message,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("Failed to save/emit message:", err);
+  }
+})
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
