@@ -63,3 +63,19 @@ router.get("/:user1/:user2", (req, res) => {
 });
 
 module.exports = router;
+
+// Export for use in Socket.IO
+const saveMessage = (senderId, receiverId, message, fileUrl = null) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO messages (sender_id, receiver_id, message, file_url)
+      VALUES (?, ?, ?, ?)
+    `;
+    db.query(sql, [senderId, receiverId, message || null, fileUrl], (err, result) => {
+      if (err) return reject(err);
+      resolve(result.insertId);
+    });
+  });
+};
+
+module.exports = { router, saveMessage };
