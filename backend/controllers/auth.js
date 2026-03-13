@@ -1,93 +1,88 @@
-// controllers/auth.js
-const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
-const dotenv = require("dotenv");
-const path = require("path");
+const db = require("../config/db");
 
-dotenv.config({ path: path.join(__dirname, ".env") });
-
-// Create a single DB connection
-const db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE
-});
-
-//SIGNUP
+// SIGNUP
 exports.signup = (req, res) => {
-    console.log(req.body);
 
-    const { name, email, password, passwordConfirm } = req.body;
+    const { name, email, password } = req.body;
 
-    db.query("SELECT email FROM users WHERE email = ?", [email], async (error, results) => {
-        if (error) {
-            console.log(error);
-        }
+    if (!name || !email || !password) {
+        return res.json({
+            status: "error",
+            message: "All fields required"
+        });
+    }
 
-        if (results.length > 0) {
-            return res.render("signup", { message: "That email is already in use", name, email });
-        } else if (password !== passwordConfirm) {
-            return res.render("signup", { message: "Passwords do not match", name, email });
-        }
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
-        // Hash the password
-        let hashedPassword = await bcrypt.hash(password, 8);
-        console.log(hashedPassword);
+    db.query(
+        "INSERT INTO users (name,email,password) VALUES (?,?,?)",
+        [name, email, hashedPassword],
+        (err, result) => {
 
-        // Insert new user into database
-        db.query(
-            "INSERT INTO users SET ?",
-            { name: name, email: email, password: hashedPassword },
-            (error, results) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log(results);
-                    return res.render("signup", { message: "User registered successfully" });
-                }
+            if (err) {
+                console.log(err);
+                return res.json({
+                    status: "error",
+                    message: "Database error"
+                });
             }
-        );
-    });
+
+            res.json({
+                status: "success",
+                message: "User registered successfully"
+            });
+        }
+    );
 };
 
-//LOGIN
+
+// LOGIN
 exports.login = (req, res) => {
+
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.render("index", { message: "Please provide email and password" });
+        return res.json({
+            status: "error",
+            message: "Email and password required"
+        });
     }
 
     db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
+
         if (err) {
-            console.error("DB Error:", err);
-            return res.render("index", { message: "Database error" });
+            return res.json({
+                status: "error",
+                message: "Database error"
+            });
         }
 
-        if (!results || results.length === 0) {
-            return res.render("index", { message: "Invalid email or password" });
+        if (results.length === 0) {
+            return res.json({
+                status: "error",
+                message: "Invalid email or password"
+            });
         }
 
         const user = results[0];
 
-        if (!user.password) {
-            return res.render("index", { message: "Invalid email or password" });
-        }
+        bcrypt.compare(password, user.password, (err, match) => {
 
-        // Compare password using callback style
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) {
-                console.error("Bcrypt error:", err);
-                return res.render("index", { message: "Error during login" });
+            if (!match) {
+                return res.json({
+                    status: "error",
+                    message: "Invalid email or password"
+                });
             }
 
-            if (!isMatch) {
-                return res.render("index", { message: "Invalid email or password" });
-            }
+            res.json({
+                status: "success",
+                message: "Login successful"
+            });
 
-            // Successful login
-            return res.render("home", { name: user.name });
         });
+
     });
+
 };
