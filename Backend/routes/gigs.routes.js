@@ -16,13 +16,18 @@ router.post("/", (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(sql, [eventTitle, venue, date, time, genre, pay], (err, result) => {
-    if (err) return res.status(500).json({ message: "Database error" });
+db.query(sql, [eventTitle, venue, date, time, genre, Number(pay)], (err, result) => {
+  if (err) {
+    console.error("DB error on POST /api/gigs:", err);
+    return res.status(500).json({ message: "Database error" });
+  }
 
-    res
-      .status(201)
-      .json({ message: "Gig posted successfully", gigId: result.insertId });
-  });
+  const acceptsJson = req.headers["content-type"]?.includes("application/json");
+  if (acceptsJson) {
+    return res.status(201).json({ message: "Gig posted successfully", gigId: result.insertId });
+  }
+  res.redirect("/");
+});
 });
 
 // GET all gigs
@@ -32,6 +37,14 @@ router.get("/", (req, res) => {
   db.query(sql, (err, results) => {
     if (err) return res.status(500).json({ message: "Database error" });
     res.json(results);
+  });
+});
+
+router.get("/:id", (req, res) => {
+  db.query("SELECT * FROM gigs WHERE id = ?", [req.params.id], (err, results) => {
+    if (err) return res.status(500).json({ message: "Database error" });
+    if (results.length === 0) return res.status(404).json({ message: "Gig not found" });
+    res.json(results[0]);
   });
 });
 
