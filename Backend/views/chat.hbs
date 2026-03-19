@@ -178,9 +178,10 @@ let currentUser = prompt("Enter your user ID (example: 1 or 2)");
 let otherUser = currentUser == 1 ? 2 : 1;
 
 
-
 // receive real-time message
 socket.on("receiveMessage", (data)=>{
+
+    console.log("Received:", data); // debug
 
     const box = document.getElementById("messages");
 
@@ -188,7 +189,8 @@ socket.on("receiveMessage", (data)=>{
 
     div.classList.add("message");
 
-    if(data.sender_id == currentUser)
+    // ✅ FIXED
+    if(data.senderId == currentUser)
         div.classList.add("sent");
     else
         div.classList.add("received");
@@ -211,16 +213,16 @@ function sendMessage(){
 
     if(message.trim()=="") return;
 
+    // ✅ FIXED
     socket.emit("sendMessage", {
 
-        sender_id: currentUser,
-        receiver_id: otherUser,
+        senderId: currentUser,
+        receiverId: otherUser,
         message: message
 
     });
 
     input.value="";
-
 }
 
 
