@@ -4,26 +4,24 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const app = express ();
+const app = express();
 
-require("./config/db");
+require("./config/db"); // your MySQL config
 
 const publicDirectory = path.join(__dirname, "./public");
 app.use(express.static(publicDirectory));
 
-//parse URL-encoded bodies(as sent by HTML forms)
+// parse URL-encoded and JSON bodies
 app.use(express.urlencoded({ extended: false }));
-//parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
 app.set("view engine", "hbs");
 
-//Define Routes
-
+// Define Routes
 app.use("/", require("./routes/pages"));
 app.use("/auth", require("./routes/auth"));
 
-
-app. listen(5001, () => {
-console. log("Server started on Port 5001");
-})
+// Listen on all interfaces
+app.listen(5001, "0.0.0.0", () => {
+  console.log("Server started on Port 5001");
+});
