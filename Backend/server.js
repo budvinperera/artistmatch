@@ -7,16 +7,16 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const gigsRoutes = require("./routes/gigs.routes");
-const { router: messagesRoutes, saveMessage } = require("./routes/messages.routes");
+const { router: messagesRoutes, saveMessage } = require("./routes/messages.routes"); 
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // parse form data
 
-// Handlebars setup
+// Handlebars setupd
 app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
@@ -40,6 +40,7 @@ app.get("/", (req, res) => {
   res.send("hello");
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
@@ -48,28 +49,23 @@ const io = new Server(server, {
     origin: "*",
   },
 });
-
+``
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  socket.on("joinRoom", (userId) => {
-    socket.join(`user_${userId}`);
-    console.log(`User ${userId} joined room user_${userId}`);
+  socket.on("sendMessage", async (messageData) => { 
+    try {
+      await saveMessage(messageData.senderId, messageData.receiverId, messageData.message);
+      io.emit("receiveMessage", {
+        senderId: messageData.senderId,
+        receiverId: messageData.receiverId,
+        message: messageData.message,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error("Failed to save/emit message:", err);
+    }
   });
-
- socket.on("sendMessage", async (messageData) => {
-  try {
-    await saveMessage(messageData.senderId, messageData.receiverId, messageData.message);
-    io.to(`user_${messageData.receiverId}`).emit("receiveMessage", {
-      senderId: messageData.senderId,
-      receiverId: messageData.receiverId,
-      message: messageData.message,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.error("Failed to save/emit message:", err);
-  }
-})
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
