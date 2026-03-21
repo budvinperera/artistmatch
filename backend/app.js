@@ -21,6 +21,9 @@ app.set("view engine", "hbs");
 app.use("/", require("./routes/pages"));
 app.use("/auth", require("./routes/auth"));
 
+//ARTIST AUTH ROUTES
+app.use("/auth", require("./routes/artistauthRoutes")); 
+
 // Listen on all interfaces
 app.listen(5001, "0.0.0.0", () => {
   console.log("Server started on Port 5001");
