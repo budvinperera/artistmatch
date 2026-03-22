@@ -6,25 +6,23 @@ dotenv.config();
 
 const app = express();
 
-require("./config/db"); // your MySQL config
+require("./config/db");
 
+// Static files
 const publicDirectory = path.join(__dirname, "./public");
 app.use(express.static(publicDirectory));
 
-// parse URL-encoded and JSON bodies
+// Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.set("view engine", "hbs");
 
-// Define Routes
+// Routes
 app.use("/", require("./routes/pages"));
-app.use("/auth", require("./routes/auth"));
+app.use("/auth", require("./routes/auth")); // ✅ ONLY THIS
 
-//ARTIST AUTH ROUTES
-app.use("/auth", require("./routes/artistauthRoutes")); 
-
-// Listen on all interfaces
+// Start server
 app.listen(5001, "0.0.0.0", () => {
   console.log("Server started on Port 5001");
 });
