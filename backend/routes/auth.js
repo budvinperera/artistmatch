@@ -1,4 +1,8 @@
 const express = require("express");
+<<<<<<< HEAD
+=======
+const authController =  require("../controllers/authController");
+>>>>>>> home-feature
 const router = express.Router();
 
 // Controllers

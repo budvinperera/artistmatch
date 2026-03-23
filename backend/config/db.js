@@ -18,4 +18,8 @@ db.connect((err) => {
   }
 });
 
+<<<<<<< HEAD
 module.exports = db;
+=======
+module.exports = db;
+>>>>>>> home-feature
