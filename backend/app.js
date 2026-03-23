@@ -18,18 +18,9 @@ app.use(express.json());
 
 app.set("view engine", "hbs");
 
-<<<<<<< HEAD
 // Routes
 app.use("/", require("./routes/pages"));
 app.use("/auth", require("./routes/auth")); // ✅ ONLY THIS
-=======
-//Define Routes
-app.use("/", require("./routes/home"));
-app.use("/", require("./routes/pages"));
-app.use("/auth", require("./routes/auth"));
-app.use("/", require("./routes/artists"));
-
->>>>>>> home-feature
 
 // Start server
 app.listen(5001, "0.0.0.0", () => {
