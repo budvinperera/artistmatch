@@ -1,1 +1,22 @@
 backend/config/serviceAccountKey.json
+
+# Node dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Backend build
+backend/dist/
+
+# Firebase secret key
+backend/config/serviceAccountKey.json
+
+# OS files
+.DS_Store
+Thumbs.db
