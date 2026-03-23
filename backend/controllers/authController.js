@@ -174,7 +174,7 @@ exports.login = async (req, res) => {
 
     const firebaseUid = data.localId;
 
-    // 🔎 Step 2: Check USERS table
+    //Check USERS table
     db.query(
       "SELECT id, name, email, is_verified, profile_image FROM users WHERE firebase_uid = ?",
       [firebaseUid],
@@ -191,7 +191,7 @@ exports.login = async (req, res) => {
           });
         }
 
-        // 🔎 Step 3: Check ARTISTS table
+        //Check ARTISTS table
         db.query(
           "SELECT * FROM artists WHERE firebase_uid = ?",
           [firebaseUid],

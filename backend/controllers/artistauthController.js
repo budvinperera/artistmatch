@@ -202,12 +202,6 @@ exports.artistLogin = async (req, res) => {
 
         const artist = results[0];
 
-        if (artist.is_verified === 0) {
-          return res.status(403).json({
-            error: "Please verify your email first",
-          });
-        }
-
         return res.json({
           message: "Login successful",
           artist,
